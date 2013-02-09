@@ -1,6 +1,10 @@
 package com.rahulbotics.boxmaker;
 
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 
@@ -12,12 +16,39 @@ import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.BaseColor;
 
+// Color Order
+// Black, Blue, Red, Magenta, Green, Cyan, and Yellow
 public class OpenBox extends Box {
 	static Logger logger = Logger.getLogger(OpenBox.class);
-
+	protected List<Box.Side> notches = new ArrayList<Box.Side>();
+    protected String deckName = "Unknown";
+    protected String insideOutside = "Unknown";
 	double mmWidth,mmHeight,mmDepth,mmThickness,mmCutWidth,mmNotchLength,
 	drawBoundingBox,specifiedInInches;
-
+    Document openDoc(float widthMm,float heightMm,String fileName) throws FileNotFoundException, DocumentException{
+        // the PDF document created
+        Document doc;
+    	float docWidth = widthMm*DPI*INCH_PER_MM;
+		float docHeight = heightMm*DPI*INCH_PER_MM;
+		//System.out.println("doc = "+docWidth+" x "+docHeight);
+    	doc = new Document(new Rectangle(docWidth,docHeight));
+		docPdfWriter = PdfWriter.getInstance(doc,new FileOutputStream(filePath));
+		String appNameVersion = DeckBoxMakerConstants.APP_NAME+" "+DeckBoxMakerConstants.VERSION;
+		doc.addAuthor(appNameVersion);
+		doc.open();
+		doc.add(new Paragraph(
+                "Produced by "+DeckBoxMakerConstants.APP_NAME+" "+
+                DeckBoxMakerConstants.VERSION+"\n"+
+                "  on "+new Date()+"\n" +
+                DeckBoxMakerConstants.WEBSITE_URL +
+                "\n" +
+                "Deck: " + deckName + " / " + insideOutside)
+		);
+		return doc;
+    }  
+    public void setDeckName (String dn) { deckName = dn; }
+    public void setInsideOutside (String i) { insideOutside = i; }
+    
     public void drawAllSides(double mmWidth,double mmHeight,double mmDepth,double mmThickness,
 		    double mmCutWidth,double mmNotchLength, boolean drawBoundingBox,
 		    boolean specifiedInInches, String fileName) 
@@ -121,12 +152,13 @@ public class OpenBox extends Box {
 		logger.debug("2. a D x H side (the left side)");
 		xOrig = margin;
 		yOrig = height + depth+ margin*3;
+		if (notches.contains(Box.Side.LEFT))
         drawArcToTheSide (xOrig - thickness * 5, 
         		          yOrig,
 		                  xOrig + thickness * 5,
 		                  yOrig + height,
-		                  35,
-		                  Box.Side.LEFT);		
+		                  25,
+		                  Box.Side.LEFT) ;		
 		drawHorizontalLine(xOrig,yOrig,notchLengthD,numNotchesD,thickness,cutwidth/2,false,false);					//top
 		drawHorizontalLine(xOrig,yOrig+height-thickness,notchLengthD,numNotchesD,thickness,cutwidth/2,true,false);	//bottom
 		//drawVerticalLine(xOrig,yOrig,notchLengthH,numNotchesH,thickness,cutwidth/2,false,false);					//left
@@ -144,6 +176,13 @@ public class OpenBox extends Box {
         logger.debug("3. a W x D side (the bottom)");
 		  xOrig = depth + margin*2;
 		  yOrig = height + margin*2;
+		  if (notches.contains(Box.Side.BOTTOM))
+	      drawArcToTheSide (xOrig , 
+	                yOrig - thickness * 5,
+	                xOrig + width,
+	                yOrig + thickness * 5,
+	                25,
+	                Box.Side.BOTTOM);			  
 		  //drawHorizontalLine(xOrig,yOrig,notchLengthW,numNotchesW,thickness,-cutwidth/2,true,true);				//top
 		  drawHorizontalLine(xOrig,yOrig+depth-thickness,notchLengthW,numNotchesW,thickness,-cutwidth/2,false,true);	//bottom
 		  drawVerticalLine(xOrig,yOrig,notchLengthD,numNotchesD,thickness,-cutwidth/2,true,true);				//left
@@ -154,11 +193,12 @@ public class OpenBox extends Box {
 		logger.debug("4. a D x H side (the right side)");
 		xOrig = depth + width + margin*3;
 		yOrig = height + depth+ margin*3;	
+		if (notches.contains(Box.Side.RIGHT))
         drawArcToTheSide (xOrig - thickness * 5 + depth, 
 		                  yOrig,
                           xOrig + thickness * 5 + depth,
                           yOrig + height,
-                          35,
+                          25,
                           Box.Side.RIGHT);			
 		drawHorizontalLine(xOrig,yOrig,notchLengthD,numNotchesD,thickness,cutwidth/2,false,false);					//top
 		drawHorizontalLine(xOrig,yOrig+height-thickness,notchLengthD,numNotchesD,thickness,cutwidth/2,true,false);	//bottom
@@ -170,22 +210,28 @@ public class OpenBox extends Box {
         if (drawBottom) {
 		  //5. a W x H side (the front)
 		  xOrig = depth + margin*2;
-		  yOrig = height + depth+ margin*3;
+		  yOrig = height + depth+ margin*3;		  
 		  drawHorizontalLine(xOrig,yOrig,notchLengthW,numNotchesW,thickness,cutwidth/2,false,false);					//top
 		  drawHorizontalLine(xOrig,yOrig+height-thickness,notchLengthW,numNotchesW,thickness,cutwidth/2,true,false);	//bottom
 		  drawVerticalLine(xOrig,yOrig,notchLengthH,numNotchesH,thickness,cutwidth/2,false,false);					//left
 		  drawVerticalLine(xOrig+width-thickness,yOrig,notchLengthH,numNotchesH,thickness,-cutwidth/2,false,false);	//right
 		  //drawLineByMm (xOrig+width-thickness,yOrig+height, xOrig,yOrig+height);
         }
-		//if (drawTop) {
-		  //3. a W x D side (the top)
-		  xOrig = depth + margin*2;
-		  yOrig = height*2 + depth + margin*4;
+		//3. a W x D side (the top)
+		xOrig = depth + margin*2;
+		yOrig = height*2 + depth + margin*4;
+		if (notches.contains(Box.Side.TOP))
+        drawArcToTheSide (xOrig , 
+                yOrig - thickness * 5 + depth,
+                xOrig + width,
+                yOrig + thickness * 5 + depth,
+                25,
+                Box.Side.TOP);	
 		  drawHorizontalLine(xOrig,yOrig,notchLengthW,numNotchesW,thickness,-cutwidth/2,true,true);				//top
 		  //drawHorizontalLine(xOrig,yOrig+depth-thickness,notchLengthW,numNotchesW,thickness,-cutwidth/2,false,true);	//bottom
 		  drawVerticalLine(xOrig,yOrig,notchLengthD,numNotchesD,thickness,-cutwidth/2,true,true);				//left
 		  drawVerticalLine(xOrig+width-thickness,yOrig,notchLengthD,numNotchesD,thickness,-cutwidth/2,false,true);	//right
-		  drawLineByMm (xOrig+thickness,yOrig+depth, xOrig+width-thickness,yOrig+depth);
+		  drawLineByMm (xOrig+thickness,yOrig+depth, xOrig+width-thickness,yOrig+depth); // This is the flat line.
 	      drawLineByMm (xOrig+thickness,      yOrig+depth-thickness, xOrig+thickness,      yOrig+depth);
 		  drawLineByMm (xOrig+width-thickness,yOrig+depth-thickness, xOrig+width-thickness,yOrig+depth);
 
@@ -202,7 +248,9 @@ private void drawArcToTheSide(float fromXmm, float fromYmm,
 	float angle1 = 0;
 	float angle2 = 0;
 	PdfContentByte cb = docPdfWriter.getDirectContent();
-
+	cb.saveState();
+	cb.setLineWidth(0f);
+	cb.setColorStroke(com.itextpdf.text.BaseColor.GREEN);
 	logger.debug("drawArcToTheSide Arc - converted:   - ( "+x0+" , "+y0+" ) to ( "+x1+" , "+y1+" )"); 	
 	if (side == Box.Side.LEFT) { 
 	  angle1 = -90;
@@ -228,39 +276,11 @@ private void drawArcToTheSide(float fromXmm, float fromYmm,
 		logger.error("drawArcToTheSide: wrong side!");
 		System.exit(1);
 	}
-	cb.saveState();
+
 	cb.arc(x0, y0, x1, y1, angle1,angle2);
+	cb.stroke();
 	cb.restoreState();
 }
-//    void drawArcByMm(float fromXmm,float fromYmm,float toXmm,float toYmm) {
-//		float x0 = DPI*fromXmm*INCH_PER_MM;
-//		float y0 = DPI*fromYmm*INCH_PER_MM;
-//    	float x1 = DPI*toXmm*INCH_PER_MM;
-//    	float y1 = DPI*toYmm*INCH_PER_MM;
-//    	PdfContentByte canvas = docPdfWriter.getDirectContent();
-//        canvas.saveState();
-////        canvas.setColorStroke(new .CYAN (0.2f));
-////        canvas.setColorFill(new GrayColor(0.9f));
-//        canvas.arc(  x1,
-//              y1,
-//              x0,
-//              y0,
-//              45, 270);
-////        canvas.ellipse(170, 270, 270, 330);
-////        canvas.circle(320, 300, 30);
-////        canvas.roundRectangle(370, 270, 80, 60, 20);
-////        canvas.fillStroke();
-//        canvas.restoreState();    	
-////    	
-//    	System.out.println(" Arc:   - ( "+x0+" , "+y0+" ) to ( "+x1+" , "+y1+" )");      	
-////    	PdfContentByte cb = docPdfWriter.getDirectContent();
-////		cb.setLineWidth(0f);
-////    	cb.
-////    	cb.stroke();
-////		cb.moveTo(x0,y0);
-////		cb.curveTo(x0, y0, 100, y1);
-////		cb.stroke();
-//    }
 	/**
 	 * @param args
 	 */

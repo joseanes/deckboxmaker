@@ -46,23 +46,28 @@ public class TestDeckBox {
 //		mmWidth  = 64 + 2 * mmThickness;
 //		mmHeight = 20 + 20 + 3 * mmThickness;
 //		mmDepth  = 89 + 1 * mmThickness;   	
-		// Dr Who Box // Internal
-		mmWidth  = 120 + 2 * mmThickness;
-		mmHeight = 93  + 2 * mmThickness;
-		mmDepth  = 65  + 2 * mmThickness;  
-		// Dr Who Box // External
-		mmWidth  = 93  + 2 * mmThickness;   // 2
-		mmHeight = 65  + 2 * mmThickness;   // 3
-		mmDepth  = 120 + 2 * mmThickness; 	// Longest	
+//		// Dr Who Box // Internal
+//		mmWidth  = 120 + 2 * mmThickness;
+//		mmHeight = 93  + 2 * mmThickness;
+//		mmDepth  = 65  + 2 * mmThickness;  
+//		// Dr Who Box // External
+//		mmWidth  = 93  + 2 * mmThickness;   // 2
+//		mmHeight = 65  + 2 * mmThickness;   // 3
+//		mmDepth  = 120 + 2 * mmThickness; 	// Longest	
 		// Bohanza 
 		mmWidth  = 57   + 2 * mmThickness;
 		mmHeight = 55   + 1 * mmThickness;
 		mmDepth  = 87.5 + 1 * mmThickness;   
-		// Magic The Gathering 100 Card Sleeved Deck
-		mmWidth  = 70   + 2 * mmThickness;
-		mmHeight = 60   + 2 * mmThickness;
-		mmDepth  = 95 + 1 * mmThickness;   		
+		// UNO 
+		mmWidth  = 60   + 2 * mmThickness;
+		mmHeight = 36   + 1 * mmThickness;
+		mmDepth  = 90   + 1 * mmThickness;  		
+//		// Magic The Gathering 100 Card Sleeved Deck
+//		mmWidth  = 70   + 2 * mmThickness;
+//		mmHeight = 60   + 2 * mmThickness;
+//		mmDepth  = 95 + 1 * mmThickness;   		
     	DeckBox myRenderer = new DeckBox();
+    	myRenderer.setDeckName("Uno");
     	myRenderer.setFilePath(fileName);
     	myRenderer.drawAllSides(mmWidth, mmHeight, mmDepth,
     			mmThickness, mmCutWidth, mmNotchLength,

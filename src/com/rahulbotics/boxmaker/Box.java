@@ -170,6 +170,7 @@ public class Box {
      void drawLineByMm(float fromXmm,float fromYmm,float toXmm,float toYmm){
     	PdfContentByte cb = docPdfWriter.getDirectContent();
 		cb.setLineWidth(0f);
+		cb.setColorStroke(com.itextpdf.text.BaseColor.CYAN);
 		float x0 = DPI*fromXmm*INCH_PER_MM;
 		float y0 = DPI*fromYmm*INCH_PER_MM;
     	cb.moveTo(x0,y0);
@@ -187,6 +188,8 @@ public class Box {
     	float y1 = DPI*toYmm*INCH_PER_MM;
     	
     	PdfContentByte cb = docPdfWriter.getDirectContent();
+    	cb.setLineWidth(0f);
+		cb.setColorStroke(com.itextpdf.text.BaseColor.CYAN);
     	cb.saveState();
     	cb.arc(x0, y0, x1, y1, -90,180);
     	cb.restoreState();
@@ -201,6 +204,7 @@ public class Box {
     	
     	PdfContentByte cb = docPdfWriter.getDirectContent();
 		cb.setLineWidth(0f);
+		cb.setColorStroke(com.itextpdf.text.BaseColor.CYAN);
 		cb.moveTo(x0,y0);
     	cb.lineTo(x0 + space, y1);
 		cb.stroke();    	
@@ -220,6 +224,7 @@ public class Box {
      void drawBoxByMm(float fromXmm,float fromYmm,float toXmm,float toYmm){
      	PdfContentByte cb = docPdfWriter.getDirectContent();
 		cb.setLineWidth(0f);
+		cb.setColorStroke(com.itextpdf.text.BaseColor.CYAN);
 		float x0 = DPI*fromXmm*INCH_PER_MM;
 		float y0 = DPI*fromYmm*INCH_PER_MM;
     	float x1 = DPI*toXmm*INCH_PER_MM;

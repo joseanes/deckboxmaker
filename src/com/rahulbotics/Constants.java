@@ -11,7 +11,7 @@ public interface Constants{
 
 	/** my website homepage */
 	public static String HOMEPAGE = 
-		new String("http://www.rahulbotics.com/");
+		new String("Modified from code originally found on http://www.rahulbotics.com/");
 	
 	// What I'm currently calling myself
 	public static String ORGANIZATON_NAME = "Rahulbotics";
