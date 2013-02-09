@@ -2,7 +2,7 @@ package com.rahulbotics.boxmaker;
 
 import java.io.FileNotFoundException;
 
-import com.lowagie.text.DocumentException;
+import com.itextpdf.text.DocumentException;
 
 /**
  * Simple wrapper to let me run the renderer from the command line

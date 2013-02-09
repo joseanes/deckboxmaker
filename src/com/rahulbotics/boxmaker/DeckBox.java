@@ -2,7 +2,9 @@ package com.rahulbotics.boxmaker;
 
 import java.io.FileNotFoundException;
 
-import com.lowagie.text.DocumentException;
+import org.apache.log4j.Logger;
+
+import com.itextpdf.text.DocumentException;
 
 /**
  * A Deck Box is a two sided box.  Or two OpenBoxes that close one on top of
@@ -12,19 +14,29 @@ import com.lowagie.text.DocumentException;
  *
  */
 public class DeckBox extends OpenBox {
+	static Logger logger = Logger.getLogger(DeckBox.class);
     public enum Dimension { NONE, DEPTH, HEIGHT, WIDTH }
-    public void drawAllSides(double mmWidth,double mmHeight,double mmDepth,double mmThickness,
-		    double mmCutWidth,double mmNotchLength, boolean drawBoundingBox,
-		    boolean specifiedInInches, String fileName,
-		    Dimension opening,
-		    boolean insideNothch,
-		    boolean outsideNotch,
-		    double outsideSizePercentage) 
-            throws FileNotFoundException, DocumentException {
+    
+    public void drawAllSides(double mmWidth,double mmHeight,
+    		                 double mmDepth,double mmThickness,
+                             double mmCutWidth,
+                             double mmNotchLength, 
+                             boolean drawBoundingBox,
+	                         boolean specifiedInInches, String fileName,
+	                         Dimension opening,
+	                         boolean insideNothch,
+	                         boolean outsideNotch,
+	                         double outsideSizePercentage) 
+                    throws FileNotFoundException, DocumentException {
+    	logger.debug("Drawing outside box.");
+    	// First draw outside
     	drawAllSides( mmWidth, mmHeight, mmDepth, mmThickness,
-    		     mmCutWidth, mmNotchLength,  drawBoundingBox,
-    		     specifiedInInches,  fileName,
-    		     false, true);
+    	  	          mmCutWidth, mmNotchLength,  drawBoundingBox,
+    		          specifiedInInches,  fileName,
+    		          false, true);
+    	// Now draw inside, reducing the size of the box by the thickness
+    	// of the material.
+    	logger.debug("Drawing inside box.");
     	doc.newPage();
     	double outerMmDepth  = mmDepth+2*mmThickness;
     	double outerMmHeight = mmHeight+2*mmThickness;

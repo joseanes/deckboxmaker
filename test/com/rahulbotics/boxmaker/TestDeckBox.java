@@ -6,7 +6,7 @@ import java.io.FileNotFoundException;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.lowagie.text.DocumentException;
+import com.itextpdf.text.DocumentException;
 /**
  * On a tall deckbox (vertically stored cards):
  *     mmDepth is longest card measurement.

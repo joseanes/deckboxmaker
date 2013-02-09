@@ -4,14 +4,20 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.util.Date;
 
-import com.lowagie.text.Document;
-import com.lowagie.text.DocumentException;
-import com.lowagie.text.Paragraph;
-import com.lowagie.text.Rectangle;
-import com.lowagie.text.pdf.PdfContentByte;
-import com.lowagie.text.pdf.PdfWriter;
+import org.apache.log4j.Logger;
+
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.pdf.PdfContentByte;
+import com.itextpdf.text.pdf.PdfWriter;
 
 public class Box {
+	static Logger logger = Logger.getLogger(Box.class);
+	public enum Side {
+	    LEFT, TOP, RIGHT, BOTTOM
+	}
 	// how many millimeters in one inch
 	static final float MM_PER_INCH = 25.4f;
 	// how many inches in one millimeter
@@ -81,7 +87,7 @@ public class Box {
     		int notchCount,float notchHieght /*material tickness*/,
     		float cutwidth,boolean flip,boolean smallside){
     	float x=x0,y=y0;
-    	//System.out.println(" side: "+notchCount+" steps @ ( "+x0+" , "+y0+" )");
+    	logger.debug(" side: "+notchCount+" steps @ ( "+x0+" , "+y0+" )");
     	
 		for (int step=0;step<notchCount;step++)
 		    {
@@ -173,25 +179,18 @@ public class Box {
     	cb.stroke();
     	// System.out.println(" Line  - ( "+x0+" , "+y0+" ) to ( "+x1+" , "+y1+" )");
     }
-    void drawArcByMm(float fromXmm,float fromYmm,float toXmm,float toYmm) {
+    void drawArcByMm(float fromXmm,float fromYmm,
+    		         float toXmm,float toYmm) {
 		float x0 = DPI*fromXmm*INCH_PER_MM;
 		float y0 = DPI*fromYmm*INCH_PER_MM;
     	float x1 = DPI*toXmm*INCH_PER_MM;
     	float y1 = DPI*toYmm*INCH_PER_MM;
     	
     	PdfContentByte cb = docPdfWriter.getDirectContent();
-		cb.setLineWidth(0f);
-//    	cb.arc(  x1,
-//                 y1,
-//                 x0,
-//                 y0,
-//                 0,
-//                 180);
-//    	cb.stroke();
-		cb.moveTo(x0,y0);
-		cb.curveTo(x0, y0, 100, y1);
-		cb.stroke();
-    	System.out.println(" Arc:   - ( "+x0+" , "+y0+" ) to ( "+x1+" , "+y1+" )");    	
+    	cb.saveState();
+    	cb.arc(x0, y0, x1, y1, -90,180);
+    	cb.restoreState();
+    	logger.debug("drawArcByMm Arc:   - ( "+x0+" , "+y0+" ) to ( "+x1+" , "+y1+" )");    	
     }
     void drawRectangularArcByMm(float fromXmm,float fromYmm,float toXmm,float toYmm,
     		float space) {
@@ -227,7 +226,7 @@ public class Box {
     	float y1 = DPI*toYmm*INCH_PER_MM;
     	cb.rectangle(x0, y0, x1, y1);
     	cb.stroke();
-    	//System.out.println("   - ( "+x0+" , "+y0+" ) to ( "+x1+" , "+y1+" )");
+    	logger.debug( "drawBoxByMm   - ( "+x0+" , "+y0+" ) to ( "+x1+" , "+y1+" )");
     }    
  	/**
  	 * Writes some annotations on the output PDF file so that you can remember
