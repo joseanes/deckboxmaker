@@ -18,6 +18,8 @@ import com.itextpdf.text.BaseColor;
 
 // Color Order
 // Black, Blue, Red, Magenta, Green, Cyan, and Yellow
+// TODO:  Re-arrange Order
+// Cyan, Blue, Green
 public class OpenBox extends Box {
 	static Logger logger = Logger.getLogger(OpenBox.class);
 	protected List<Box.Side> notches = new ArrayList<Box.Side>();
