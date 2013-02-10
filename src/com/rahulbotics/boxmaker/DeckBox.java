@@ -24,18 +24,25 @@ public class DeckBox extends OpenBox {
                              double mmCutWidth,
                              double mmNotchLength, 
                              boolean drawBoundingBox,
-	                         boolean specifiedInInches, String fileName,
+	                         boolean specifiedInInches, 
+	                         String fileName,
 	                         Dimension opening,
 	                         boolean insideNothch,
 	                         boolean outsideNotch,
-	                         double outsideSizePercentage) 
+	                         double interBoxToleranceMm,
+	                         boolean invertNotches) 
                     throws FileNotFoundException, DocumentException {
     	logger.debug("Drawing Inside box.");
     	// First draw outside
     	setInsideOutside("Inside");
     	notches.clear();
-    	notches.add(Box.Side.LEFT);
-    	notches.add(Box.Side.RIGHT);
+    	if (invertNotches) {
+      	  notches.add(Box.Side.TOP);
+      	  notches.add(Box.Side.BOTTOM);
+    	} else {
+      	  notches.add(Box.Side.LEFT);
+      	  notches.add(Box.Side.RIGHT);   		
+    	}
     	drawAllSides( mmWidth, mmHeight, mmDepth, mmThickness,
     	  	          mmCutWidth, mmNotchLength,  drawBoundingBox,
     		          specifiedInInches,  fileName,
@@ -44,24 +51,29 @@ public class DeckBox extends OpenBox {
     	// of the material.
     	logger.debug("Drawing Outside box.");
     	notches.clear();
-    	notches.add(Box.Side.TOP);
-    	notches.add(Box.Side.BOTTOM);    	
+    	if (invertNotches) {
+      	  notches.add(Box.Side.LEFT);
+      	  notches.add(Box.Side.RIGHT);
+    	} else {
+    	  notches.add(Box.Side.TOP);
+    	  notches.add(Box.Side.BOTTOM);
+    	}
     	setInsideOutside("Outside");
     	doc.newPage();
-    	double outerMmDepth  = mmDepth+2*mmThickness;
-    	double outerMmHeight = mmHeight+2*mmThickness;
-    	double outerMmWidth  = mmWidth+2*mmThickness;
+    	double outerMmDepth  = mmDepth  + 2 * mmThickness + interBoxToleranceMm;
+    	double outerMmHeight = mmHeight + 2 * mmThickness + interBoxToleranceMm;
+    	double outerMmWidth  = mmWidth  + 2 * mmThickness + interBoxToleranceMm;
     	if (opening == Dimension.DEPTH) {
-    		outerMmDepth  -= mmThickness;
-    		outerMmDepth  = outerMmDepth * outsideSizePercentage / 100;
+    		outerMmDepth  -= mmThickness;  
+    		outerMmDepth  -= interBoxToleranceMm;
     	}
     	if (opening == Dimension.HEIGHT) {
     		outerMmHeight -= mmThickness;
-    		outerMmHeight = outerMmHeight * outsideSizePercentage / 100;
+    		outerMmHeight -= interBoxToleranceMm; 		
     	}
     	if (opening == Dimension.WIDTH) {
     		outerMmWidth -= mmThickness;
-    		outerMmWidth = outerMmWidth  * outsideSizePercentage / 100;
+    		outerMmWidth -= interBoxToleranceMm;
     	}    	
     	drawAllSides( outerMmWidth, 
     			      outerMmHeight, 

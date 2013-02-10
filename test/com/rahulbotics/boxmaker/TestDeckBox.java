@@ -27,10 +27,11 @@ public class TestDeckBox {
 	double mmDepth            = 90 + 1 * mmThickness; // 90 // 140
 	double mmCutWidth         = 0 * Box.MM_PER_INCH;
     double mmNotchLength      = 0.5625 * Box.MM_PER_INCH;
+    boolean invertNotches = false;
 
     DeckBox.Dimension opening = DeckBox.Dimension.DEPTH;
     double insideClearance    = 0;
-    double outsideSizePercentage = 100;
+    double interBoxToleranceMm = 0.75;
     boolean specifiedInInches = false;
 	String fileName	          = "test.pdf";
 	boolean drawBoundingBox   = false;
@@ -39,6 +40,7 @@ public class TestDeckBox {
 	}
 	@Test
 	public void testDrawAllSides() throws FileNotFoundException, DocumentException {
+		DeckBox myRenderer = new DeckBox();		
 //		mmWidth = 140 + 2 * mmThickness;
 //		mmHeight = 100 + 2 * mmThickness;
 //		mmDepth = 65+ 2 * mmThickness;  
@@ -58,16 +60,21 @@ public class TestDeckBox {
 		mmWidth  = 57   + 2 * mmThickness;
 		mmHeight = 55   + 1 * mmThickness;
 		mmDepth  = 87.5 + 1 * mmThickness;   
-		// UNO 
+		// UNO
+//		myRenderer.setDeckName("Uno");		
+//		mmWidth  = 60   + 2 * mmThickness;
+//		mmHeight = 36   + 1 * mmThickness;
+//		mmDepth  = 90   + 1 * mmThickness;
+		// Munchkin - for multiple decks.
+		myRenderer.setDeckName("Munchkin");		
 		mmWidth  = 60   + 2 * mmThickness;
-		mmHeight = 36   + 1 * mmThickness;
-		mmDepth  = 90   + 1 * mmThickness;  		
+		mmHeight = 3 * 50   + 1 * mmThickness;
+		mmDepth  = 90   + 1 * mmThickness;
+		invertNotches = true;
 //		// Magic The Gathering 100 Card Sleeved Deck
 //		mmWidth  = 70   + 2 * mmThickness;
 //		mmHeight = 60   + 2 * mmThickness;
 //		mmDepth  = 95 + 1 * mmThickness;   		
-    	DeckBox myRenderer = new DeckBox();
-    	myRenderer.setDeckName("Uno");
     	myRenderer.setFilePath(fileName);
     	myRenderer.drawAllSides(mmWidth, mmHeight, mmDepth,
     			mmThickness, mmCutWidth, mmNotchLength,
@@ -75,7 +82,8 @@ public class TestDeckBox {
     			opening,
     			false,
     			false, 
-    			outsideSizePercentage);
+    			interBoxToleranceMm,
+    			invertNotches);
     	myRenderer.closeDoc();
 	}
 }
